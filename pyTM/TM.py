@@ -36,6 +36,8 @@ class TM:
         s_in = self._r()
         
         found = False
+        if self._state not in self._map:
+            return False
         for s, (q_new, s_out, mov) in self._map[self._state].items():
             if s == ANY:
                 # s_new is a function of s_in
@@ -77,11 +79,13 @@ class TM:
                 print(f"{len(prefix)*' '}^ ({self._state})")
             if i > timeout:
                 print("Timeout.")
-                return -1
+                return self.tape.strip(F), -1
             ok = self._step()
             i += 1
         self.tape = "".join(self.tape)
-        print(f"Finished in {i} steps. \n  [{self.tape.strip(F)}]")
+        if debug:
+            print(f"Finished in {i} steps. \n  [{self.tape.strip(F)}]")
+        return self.tape.strip(F), i
         
 
 class TMFactory:
